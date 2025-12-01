@@ -1,0 +1,11 @@
+fastapi
+firebase-admin
+google-cloud-firestore
+pytest
+httpx
+uvicorn
+google-cloud-aiplatform
+google-cloud-tasks
+google-auth
+pydantic-settings
+pytest-cov
