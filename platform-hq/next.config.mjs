@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'standalone', // Required for Docker build
   async rewrites() {
     return [
       // Security Note: The Authorization: Bearer <token> header from the client 

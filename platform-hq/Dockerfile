@@ -49,14 +49,19 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy public folder from the builder stage
-COPY --from=builder /app/public ./public
+# ---------------------------------------------------------------------------
+# 3. Copy Assets
+# ---------------------------------------------------------------------------
+# FIX: Commented out because 'public' folder is missing in your source.
+# Uncomment this if you add a 'public' folder later (for images/icons).
+# COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
 # Automatically leverage output traces to reduce image size
+# IMPORTANT: You MUST add { output: 'standalone' } to your next.config.mjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
