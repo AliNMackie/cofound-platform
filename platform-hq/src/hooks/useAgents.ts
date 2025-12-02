@@ -20,6 +20,11 @@ export function useAgents() {
 
   useEffect(() => {
     async function fetchAgents() {
+      if (!db) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const querySnapshot = await getDocs(collection(db, "system_agents"));
         const agentsData = querySnapshot.docs.map((doc) => ({

@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/auth";
-import { 
-  LogOut, 
+import {
+  LogOut,
   Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,8 @@ export default function DashboardLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
@@ -61,7 +63,7 @@ export default function DashboardLayout({
       <div className="hidden border-r bg-muted/40 md:block">
         <Sidebar user={user} />
       </div>
-      
+
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Topbar */}
@@ -100,14 +102,14 @@ export default function DashboardLayout({
               <DropdownMenuItem disabled>{user.displayName}</DropdownMenuItem>
               <DropdownMenuItem disabled className="text-xs text-muted-foreground">{user.email}</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => auth.signOut()}>
+              <DropdownMenuItem onClick={() => auth?.signOut()}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        
+
         {/* Page Content */}
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-auto">
           {children}

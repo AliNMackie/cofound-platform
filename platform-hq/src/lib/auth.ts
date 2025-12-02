@@ -1,10 +1,10 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  OAuthProvider, 
-  signInWithPopup, 
-  User 
+import {
+  getAuth,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  User
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -17,22 +17,35 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Initialize Firebase only in browser environment
+let app: ReturnType<typeof getApp> | undefined;
+let auth: ReturnType<typeof getAuth> | undefined;
+let db: ReturnType<typeof getFirestore> | undefined;
 
-// Providers
-const googleProvider = new GoogleAuthProvider();
+if (typeof window !== 'undefined') {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
 
-const microsoftProvider = new OAuthProvider("microsoft.com");
-microsoftProvider.addScope("offline_access");
-microsoftProvider.setCustomParameters({
-  // Force consent to ensure refresh token is returned if needed
-  prompt: "consent",
-});
+export { auth, db };
+
+// Providers - only initialize in browser
+const googleProvider = typeof window !== 'undefined' ? new GoogleAuthProvider() : null;
+
+const microsoftProvider = typeof window !== 'undefined' ? new OAuthProvider("microsoft.com") : null;
+if (microsoftProvider) {
+  microsoftProvider.addScope("offline_access");
+  microsoftProvider.setCustomParameters({
+    // Force consent to ensure refresh token is returned if needed
+    prompt: "consent",
+  });
+}
 
 export const signInWithGoogle = async () => {
+  if (!auth || !googleProvider) {
+    throw new Error("Firebase auth not initialized");
+  }
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result.user;
@@ -43,6 +56,9 @@ export const signInWithGoogle = async () => {
 };
 
 export const signInWithMicrosoft = async () => {
+  if (!auth || !microsoftProvider) {
+    throw new Error("Firebase auth not initialized");
+  }
   try {
     const result = await signInWithPopup(auth, microsoftProvider);
     return result.user;

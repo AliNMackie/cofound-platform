@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithGoogle, signInWithMicrosoft, auth } from "@/lib/auth";
@@ -19,6 +21,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.push("/dashboard");
