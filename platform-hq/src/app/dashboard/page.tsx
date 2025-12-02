@@ -1,3 +1,9 @@
+export const dynamic = 'force-dynamic'; // <--- ADD THIS LINE
+
+export default function DashboardPage() {
+  // ... your existing code
+}
+
 "use client";
 
 import AgentGrid from "@/components/AgentGrid";

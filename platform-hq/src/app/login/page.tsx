@@ -69,7 +69,7 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-2">
             <Button
               variant="outline"
@@ -95,7 +95,7 @@ export default function LoginPage() {
               </svg>
               Sign in with Google
             </Button>
-            
+
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
@@ -114,14 +114,14 @@ export default function LoginPage() {
             >
               {/* Microsoft Icon (Simple SVG) */}
               <svg
-                 className="mr-2 h-4 w-4"
-                 xmlns="http://www.w3.org/2000/svg" 
-                 viewBox="0 0 23 23"
+                className="mr-2 h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 23 23"
               >
-                <path fill="#f35325" d="M1 1h10v10H1z"/>
-                <path fill="#81bc06" d="M12 1h10v10H12z"/>
-                <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-                <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                <path fill="#f35325" d="M1 1h10v10H1z" />
+                <path fill="#81bc06" d="M12 1h10v10H12z" />
+                <path fill="#05a6f0" d="M1 12h10v10H1z" />
+                <path fill="#ffba08" d="M12 12h10v10H12z" />
               </svg>
               Sign in with Microsoft Entra ID
             </Button>
