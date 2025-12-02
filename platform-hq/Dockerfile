@@ -5,8 +5,12 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# ---------------------------------------------------------------------------
+# 1. Copy dependencies (Adjusted for Root Context)
+# ---------------------------------------------------------------------------
+# FIX: Prepend 'platform-hq/' to the source paths
+COPY platform-hq/package.json platform-hq/yarn.lock* platform-hq/package-lock.json* platform-hq/pnpm-lock.yaml* ./
+
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -18,7 +22,12 @@ RUN \
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+
+# ---------------------------------------------------------------------------
+# 2. Copy application code (Adjusted for Root Context)
+# ---------------------------------------------------------------------------
+# FIX: Copy only the platform-hq folder contents into /app
+COPY platform-hq/ .
 
 # Disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -40,6 +49,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy public folder from the builder stage
 COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
