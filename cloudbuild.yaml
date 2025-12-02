@@ -1,0 +1,38 @@
+steps:
+  # Step 1: Build the Docker image
+  # We use the existing Dockerfile found inside 'platform-hq'
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cofound-app-registry/platform:$COMMIT_SHA'
+      - '-f'
+      - 'platform-hq/Dockerfile'  # Points to the Dockerfile in the subfolder
+      - '.'                       # Build Context: Root of the repo
+    timeout: '900s'
+
+  # Step 2: Push the image to the Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cofound-app-registry/platform:$COMMIT_SHA'
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'cofound-platform-service'
+      - '--image'
+      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cofound-app-registry/platform:$COMMIT_SHA'
+      - '--region'
+      - 'europe-west2'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated' # Allows public access (required for login pages)
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cofound-app-registry/platform:$COMMIT_SHA'
