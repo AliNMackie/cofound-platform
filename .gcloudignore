@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules/
+platform-hq/node_modules/
+.next/
+platform-hq/.next/
+*.log
+build-error.log
+.env.local
+.env*.local
