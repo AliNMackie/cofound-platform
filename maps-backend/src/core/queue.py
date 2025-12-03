@@ -8,14 +8,13 @@ from typing import Dict, Any, Optional
 logger = logging.getLogger(__name__)
 
 class JobQueue:
-    def __init__(self, project_id: Optional[str] = None, location: str = "us-central1", queue_name: str = "default"):
+    def __init__(self, project_id: Optional[str] = None, location: Optional[str] = None, queue_name: Optional[str] = None):
         """
         Initializes the Cloud Tasks client.
         """
-        # In a real environment, project_id and location would usually be pulled from environment variables.
-        self.project_id = project_id or os.getenv("GOOGLE_CLOUD_PROJECT", "test-project")
-        self.location = location
-        self.queue_name = queue_name
+        self.project_id = project_id or os.getenv("GCP_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT")
+        self.location = location or os.getenv("VERTEX_AI_LOCATION", "europe-west2")
+        self.queue_name = queue_name or "default"
         
         try:
             self.client = tasks_v2.CloudTasksClient()

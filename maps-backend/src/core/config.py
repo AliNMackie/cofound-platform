@@ -1,43 +1,32 @@
 import logging
 from typing import List, Literal
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import Field, field_validator # <-- NOTE: field_validator import needed!
 
 logger = logging.getLogger(__name__)
 
 class Settings(BaseSettings):
-    # GCP Project Configuration
-    GCP_PROJECT_ID: str = Field(..., description="Google Cloud Project ID")
-    FIREBASE_PROJECT_ID: str = Field(..., description="Firebase Project ID (usually same as GCP)")
-    
-    # Cloud Tasks Configuration
-    TASK_QUEUE_PATH: str = Field(..., description="Full path to Cloud Task Queue e.g. projects/.../queues/...")
-    
-    # Environment Configuration
-    ENVIRONMENT: Literal["dev", "prod"] = Field("dev", description="Deployment environment")
-    
-    # Server Configuration
-    PORT: int = Field(8080, description="Server port (required for Cloud Run/App Engine)")
-    
-    # Vertex AI Configuration
-    VERTEX_AI_LOCATION: str = Field("europe-west2", description="Vertex AI location (must be europe-west2 for UK/EU compliance)")
+    # ... (existing fields) ...
     
     # CORS Configuration
     CORS_ORIGINS: List[str] = Field(
-        default=["http://localhost:3000"], 
+        default=[], 
         description="List of allowed CORS origins"
     )
-    
-    # Optional: Service Account Email for OIDC
-    SERVICE_ACCOUNT_EMAIL: str = Field(default="", description="Service Account Email for Cloud Tasks OIDC")
-    
-    # Optional: Service URL (for Cloud Tasks target)
-    SERVICE_URL: str = Field(default="http://localhost:8080", description="URL of the deployed service")
 
+    # --- FIX START: Add a validator to handle the empty string ---
+    @field_validator('CORS_ORIGINS', mode='before')
+    def parse_empty_cors_origins(cls, v):
+        if isinstance(v, str) and v.strip() == '':
+            logger.warning("CORS_ORIGINS is empty; defaulting to empty list.")
+            return [] # Convert the empty string to a Python list
+        return v
+    # --- FIX END ---
+    
     model_config = {
         "env_file": ".env",
         "case_sensitive": True,
-        "extra": "ignore"  # Allow extra fields in .env
+        "extra": "ignore" 
     }
 
 # Validate settings immediately on import

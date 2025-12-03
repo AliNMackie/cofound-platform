@@ -74,6 +74,10 @@ def create_app() -> FastAPI:
     app.include_router(analysis.router, prefix="/api/v1", tags=["Analysis"])
     app.include_router(handler.router, prefix="/worker", tags=["Worker"])
 
+    @app.get("/", tags=["Health"])
+    async def root():
+        return {"status": "ok", "service": "maps-backend"}
+
     # Health Check
     @app.get("/health", tags=["Health"])
     async def health_check():
