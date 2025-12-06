@@ -21,7 +21,13 @@ steps:
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'GCP_PROJECT_ID=$PROJECT_ID,FIREBASE_PROJECT_ID=$PROJECT_ID,ENVIRONMENT=production,VERTEX_AI_LOCATION=europe-west2'
+      - 'GCP_PROJECT_ID=$PROJECT_ID'
+      - '--set-env-vars'
+      - 'FIREBASE_PROJECT_ID=$PROJECT_ID'
+      - '--set-env-vars'
+      - 'ENVIRONMENT=production'
+      - '--set-env-vars'
+      - 'VERTEX_AI_LOCATION=europe-west2'
 
 images:
   - 'europe-west2-docker.pkg.dev/$PROJECT_ID/backend-repo/maps-backend:latest'
