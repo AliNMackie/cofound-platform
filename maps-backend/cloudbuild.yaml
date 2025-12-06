@@ -1,7 +1,27 @@
-steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west2-docker.pkg.dev/cofound-platform-prod/backend-repo/maps-backend:latest', '.']
-images:
-  - 'europe-west2-docker.pkg.dev/cofound-platform-prod/backend-repo/maps-backend:latest'
 options:
   logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west2-docker.pkg.dev/cofound-platform-prod/backend-repo/maps-backend:latest', '.']
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'maps-backend'
+      - '--image'
+      - 'europe-west2-docker.pkg.dev/cofound-platform-prod/backend-repo/maps-backend:latest'
+      - '--region'
+      - 'europe-west2'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'GCP_PROJECT_ID=$PROJECT_ID,FIREBASE_PROJECT_ID=$PROJECT_ID,ENVIRONMENT=production,VERTEX_AI_LOCATION=europe-west2'
+
+images:
+  - 'europe-west2-docker.pkg.dev/cofound-platform-prod/backend-repo/maps-backend:latest'

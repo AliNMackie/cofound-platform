@@ -14,6 +14,12 @@ class Settings(BaseSettings):
         description="List of allowed CORS origins"
     )
 
+    # Environment & Project Configuration
+    ENVIRONMENT: Literal["development", "production", "dev"] = "development"
+    GCP_PROJECT_ID: str
+    FIREBASE_PROJECT_ID: str
+    VERTEX_AI_LOCATION: str = "us-central1"
+
     # --- FIX START: Add a validator to handle the empty string ---
     @field_validator('CORS_ORIGINS', mode='before')
     def parse_empty_cors_origins(cls, v):
@@ -30,8 +36,14 @@ class Settings(BaseSettings):
     }
 
 # Validate settings immediately on import
+import os
 try:
     settings = Settings()
 except Exception as e:
-    logger.critical(f"Failed to load configuration: {e}")
+    logger.critical("Failed to load configuration.")
+    logger.critical(f"Environment keys: {list(os.environ.keys())}")
+    if hasattr(e, "errors"):
+        logger.critical(f"Validation errors: {e.errors()}")
+    else:
+        logger.critical(f"Error details: {e}")
     raise e
