@@ -4,7 +4,7 @@ options:
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west2-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/maps-backend:latest', '.']
+    args: ['build', '-t', 'europe-west2-docker.pkg.dev/$PROJECT_ID/backend-repo/maps-backend:latest', '.']
 
   # Deploy container image to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -14,7 +14,7 @@ steps:
       - 'deploy'
       - 'maps-backend'
       - '--image'
-      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/maps-backend:latest'
+      - 'europe-west2-docker.pkg.dev/$PROJECT_ID/backend-repo/maps-backend:latest'
       - '--region'
       - 'europe-west2'
       - '--platform'
@@ -24,4 +24,4 @@ steps:
       - 'GCP_PROJECT_ID=$PROJECT_ID,FIREBASE_PROJECT_ID=$PROJECT_ID,ENVIRONMENT=production,VERTEX_AI_LOCATION=europe-west2'
 
 images:
-  - 'europe-west2-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/maps-backend:latest'
+  - 'europe-west2-docker.pkg.dev/$PROJECT_ID/backend-repo/maps-backend:latest'
